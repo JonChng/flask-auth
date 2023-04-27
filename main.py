@@ -12,8 +12,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 app.app_context().push()
 
-
-
 ##CREATE TABLE IN DB
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -21,7 +19,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
 #Line below only required once, when creating DB. 
-db.create_all()
+# db.create_all()
 
 
 @app.route('/')
@@ -57,7 +55,6 @@ def login():
 def secrets(name):
 
     return render_template("secrets.html", name=name)
-
 
 @app.route('/logout')
 def logout():
