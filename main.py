@@ -21,11 +21,9 @@ class User(UserMixin, db.Model):
 #Line below only required once, when creating DB. 
 # db.create_all()
 
-
 @app.route('/')
 def home():
     return render_template("index.html")
-
 
 @app.route('/register', methods=["POST", "GET"])
 def register():
