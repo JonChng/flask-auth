@@ -18,8 +18,6 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
-#Line below only required once, when creating DB. 
-# db.create_all()
 
 @app.route('/')
 def home():
@@ -29,18 +27,19 @@ def home():
 def register():
 
     if request.method == "POST":
-        username = request.form.get("name")
-        email = request.form.get("email")
-        password = request.form.get("password")
+        username_ = request.form.get("name")
+        email_ = request.form.get("email")
+        password_ = request.form.get("password")
 
         new_entry = User(
-            email=email,
-            password=password,
-            name=username
+            email=email_,
+            password=password_,
+            name=username_
         )
         db.session.add(new_entry)
         db.session.commit()
-        return redirect(url_for("secrets", name=username))
+        return redirect(url_for("secrets", name=username_))
+
     return render_template("register.html")
 
 
