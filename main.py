@@ -34,43 +34,56 @@ def home():
 @app.route('/register', methods=["POST", "GET"])
 def register():
 
+    error = None
     if request.method == "POST":
         username_ = request.form.get("name")
         email_ = request.form.get("email")
         password_ = request.form.get("password")
 
-        new_entry = User(
-            email=email_,
-            password=generate_password_hash(password_, method="pbkdf2:sha256", salt_length=8),
-            name=username_
-        )
-        db.session.add(new_entry)
-        db.session.commit()
-        return redirect(url_for("secrets", name=username_))
+        if User.query.filter_by(email=email_).first() != None:
+            error = "Email already exists."
+        else:
+            new_entry = User(
+                email=email_,
+                password=generate_password_hash(password_, method="pbkdf2:sha256", salt_length=8),
+                name=username_
+            )
+            db.session.add(new_entry)
+            db.session.commit()
+            return redirect(url_for("secrets", name=username_))
 
-    return render_template("register.html")
+    return render_template("register.html", error=error)
 
 
 @app.route('/login', methods=["GET","POST"])
 def login():
+
+    error = None
+
     if request.method == "POST":
         email = request.form.get("email")
         passsword = request.form.get("password")
 
         user = User.query.filter_by(email=email).first()
 
-        if check_password_hash(user.password, passsword):
-            login_user(user)
-            flask.flash("Logged in successfully")
-            return redirect(url_for("secrets", name=current_user.name))
+        if user == None:
+            error = "Invalid email."
 
-    return render_template("login.html")
+        else:
+            if check_password_hash(user.password, passsword):
+                login_user(user)
+                print("logged in")
+                flash("Logged in successfully")
+                return redirect(url_for("secrets", name=current_user.name))
+            else:
+                error = "Invalid password."
+
+    return render_template("login.html", error=error)
 
 
 @app.route('/secrets/<name>')
 @login_required
 def secrets(name):
-
     return render_template("secrets.html", name=name)
 
 @app.route('/logout')
