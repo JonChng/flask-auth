@@ -88,7 +88,8 @@ def secrets(name):
 
 @app.route('/logout')
 def logout():
-    pass
+    logout_user()
+    return redirect(url_for("home"))
 
 @app.route('/download', methods=["GET"])
 @login_required
