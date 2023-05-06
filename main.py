@@ -29,7 +29,7 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template("index.html", logged_in=current_user.is_authenticated)
 
 @app.route('/register', methods=["POST", "GET"])
 def register():
@@ -50,9 +50,9 @@ def register():
             )
             db.session.add(new_entry)
             db.session.commit()
-            return redirect(url_for("secrets", name=username_))
+            return redirect(url_for("secrets", name=username_, logged_in=True))
 
-    return render_template("register.html", error=error)
+    return render_template("register.html", error=error, logged_in=current_user.is_authenticated)
 
 
 @app.route('/login', methods=["GET","POST"])
@@ -74,7 +74,7 @@ def login():
                 login_user(user)
                 print("logged in")
                 flash("Logged in successfully")
-                return redirect(url_for("secrets", name=current_user.name))
+                return redirect(url_for("secrets", name=current_user.name, logged_in=True))
             else:
                 error = "Invalid password."
 
@@ -84,7 +84,7 @@ def login():
 @app.route('/secrets/<name>')
 @login_required
 def secrets(name):
-    return render_template("secrets.html", name=name)
+    return render_template("secrets.html", name=name, logged_in=True)
 
 @app.route('/logout')
 def logout():
