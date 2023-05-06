@@ -19,6 +19,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
 
+
 @app.route('/')
 def home():
     return render_template("index.html")
@@ -33,7 +34,7 @@ def register():
 
         new_entry = User(
             email=email_,
-            password=password_,
+            password=generate_password_hash(password_, method="pbkdf2:sha256", salt_length=8),
             name=username_
         )
         db.session.add(new_entry)
